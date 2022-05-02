@@ -4,13 +4,13 @@ import heartrate
 import preprocessing
 import eulerian
 import time
-c=0
+import numpy as np
+from numpy import asarray
 # Frequency range for Fast-Fourier Transform
-freq_min =0.7
-freq_max =2
+freq_min =1.2
+freq_max =3
 
 t0 = time.time()
-
 video = cv2.VideoCapture(0)
 # We need to check if camera
 # is opened previously or not
@@ -29,7 +29,7 @@ size = (frame_width, frame_height)
 # is stored in 'filename.avi' file.
 result = cv2.VideoWriter('filename.mov',
                          cv2.VideoWriter_fourcc(*'MJPG'),
-                         6, size)
+                         15, size)
 
 while (True):
     ret, frame = video.read()
@@ -48,7 +48,7 @@ while (True):
         # to stop the process
         t1 = time.time()  # current time
         num_seconds = t1 - t0  # diff
-        if num_seconds > 10:
+        if num_seconds >5:
             break
         if cv2.waitKey(1) & 0xFF == ord('s'):
             break
@@ -71,8 +71,12 @@ print("The video was successfully saved")
 # Preprocessing phase
 print("Reading + preprocessing video...")
 video_frames, frame_ct, fps = preprocessing.read_video('filename.mov')
+
+
+
 # Build Laplacian video pyramid
 print("Building Laplacian video pyramid...")
+
 lap_video = pyramids.build_video_pyramid(video_frames)
 
 amplified_video_pyramid = []
@@ -97,5 +101,9 @@ amplified_frames = pyramids.collapse_laplacian_video_pyramid(lap_video, frame_ct
 # Output heart rate and final video
 print("Heart rate: ", heart_rate, "bpm")
 print("Displaying final video...")
+for frames in amplified_frames:
+    cv2.imshow("frames", frames)
+    cv2.waitKey(20)
+
 
 

@@ -1,6 +1,6 @@
 import numpy as np
 import scipy.fftpack as fftpack
-
+import matplotlib.pyplot as plt
 
 # Temporal bandpass filter with Fast-Fourier Transform
 def fft_filter(video, freq_min, freq_max, fps):
@@ -14,5 +14,6 @@ def fft_filter(video, freq_min, freq_max, fps):
     iff = fftpack.ifft(fft, axis=0)
     result = np.abs(iff)
     result *= 100  # Amplification factor
+
 
     return result, fft, frequencies
