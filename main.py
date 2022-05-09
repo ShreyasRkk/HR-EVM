@@ -83,10 +83,10 @@ amplified_video_pyramid = []
 for i, video in enumerate(lap_video):
     if i == 0 or i==len(lap_video)-1:
         continue
-    # print("i", i)
-    # print("dimension", np.ndim(video))
-    # print("shape", np.shape(video))
-    # print("size", np.size(video))
+    print("i", i)
+    print("dimension", np.ndim(video))
+    print("shape", np.shape(video))
+    print("size", np.size(video))
 
 
     # Eulerian magnification with temporal FFT filtering
