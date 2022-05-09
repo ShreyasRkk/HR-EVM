@@ -78,12 +78,16 @@ video_frames, frame_ct, fps = preprocessing.read_video('filename.mov')
 print("Building Laplacian video pyramid...")
 
 lap_video = pyramids.build_video_pyramid(video_frames)
-
 amplified_video_pyramid = []
 
 for i, video in enumerate(lap_video):
-    if i == 0 or i == len(lap_video)-1:
+    if i == 0 or i==len(lap_video)-1:
         continue
+    # print("i", i)
+    print("dimension", np.ndim(video))
+    print("shape", np.shape(video))
+    print("size", np.size(video))
+
 
     # Eulerian magnification with temporal FFT filtering
     print("Running FFT and Eulerian magnification...")
@@ -101,9 +105,9 @@ amplified_frames = pyramids.collapse_laplacian_video_pyramid(lap_video, frame_ct
 # Output heart rate and final video
 print("Heart rate: ", heart_rate, "bpm")
 print("Displaying final video...")
-for frames in amplified_frames:
-    cv2.imshow("frames", frames)
-    cv2.waitKey(20)
+# for frames in amplified_frames:
+#     cv2.imshow("frames", frames)
+#     cv2.waitKey(20)
 
 
 

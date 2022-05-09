@@ -31,7 +31,7 @@ def build_laplacian_pyramid(img, levels):
         gaussian_pyramid[i] = cv2.resize(gaussian_pyramid[i], (height, width))
         diff = cv2.subtract(gaussian_pyramid[i],upsampled)
         laplacian_pyramid.append(diff)
-        cv2.imshow(str(i),diff)
+        #cv2.imshow(str(i),diff)
     laplacian_pyramid.append(gaussian_pyramid[-1])
 
     return laplacian_pyramid
@@ -42,12 +42,11 @@ def build_video_pyramid(frames):
     lap_video = []
     layer = frames.copy()
     for i, frame in enumerate(frames):
-        pyramid = build_laplacian_pyramid(frame, 5)
-        for j in range(5):
+        pyramid = build_laplacian_pyramid(frame,3)
+        for j in range(3):
             if i == 0:
                 lap_video.append(np.zeros((len(frames), pyramid[j].shape[0], pyramid[j].shape[1], 3)))
             lap_video[j][i] = pyramid[j]
-
     return lap_video
 
 
