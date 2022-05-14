@@ -7,8 +7,8 @@ import time
 import numpy as np
 from numpy import asarray
 # Frequency range for Fast-Fourier Transform
-freq_min =1.2
-freq_max =3
+freq_min =1.2 #minimum freq range
+freq_max =2 #max freq range
 
 t0 = time.time()
 video = cv2.VideoCapture(0)
@@ -27,10 +27,10 @@ size = (frame_width, frame_height)
 # Below VideoWriter object will create
 # a frame of above defined The output
 # is stored in 'filename.avi' file.
-result = cv2.VideoWriter('filename.mov',
-                         cv2.VideoWriter_fourcc(*'MJPG'),
-                         15, size)
-
+# FourCC is a 4-byte code used to specify the video codec
+result = cv2.VideoWriter('filename.avi',
+                         cv2.VideoWriter_fourcc(*'MJPG'),#here MJPG (motion jpeg)
+                         6, size)
 while (True):
     ret, frame = video.read()
 
@@ -70,7 +70,7 @@ print("The video was successfully saved")
 
 # Preprocessing phase
 print("Reading + preprocessing video...")
-video_frames, frame_ct, fps = preprocessing.read_video('filename.mov')
+video_frames, frame_ct, fps = preprocessing.read_video('filename.avi')
 
 
 
@@ -80,14 +80,18 @@ print("Building Laplacian video pyramid...")
 lap_video = pyramids.build_video_pyramid(video_frames)
 amplified_video_pyramid = []
 
-for i, video in enumerate(lap_video):
+# dim1= len(lap_video)
+# dim2=lap_video[0]
+# dim3=lap_video[0][0]
+# dim4=lap_video[0][0][0]
+# dim5=lap_video[0][0][0][0]
+#
+# print("lap_video dim", dim1, len(dim2),len(dim3),len(dim4),len(dim5))
+
+
+for i, video in enumerate(lap_video): #video includes all the frames for each level(layer). shape (1,135,500,500,3)[if lev=3]
     if i == 0 or i==len(lap_video)-1:
         continue
-    print("i", i)
-    print("dimension", np.ndim(video))
-    print("shape", np.shape(video))
-    print("size", np.size(video))
-
 
     # Eulerian magnification with temporal FFT filtering
     print("Running FFT and Eulerian magnification...")

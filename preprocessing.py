@@ -7,34 +7,46 @@ import cv2
 import PIL
 from PIL import Image as im
 import matplotlib.pyplot as plt
-faceCascade = cv2.CascadeClassifier("haarcascades/haarcascade_frontalface_default.xml")
+faceCascade = cv2.CascadeClassifier("haarcascades/haarcascade_frontalface_default.xml")#see properly
 
 
-def rgb2gray(rgb):
-    r, g, b = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
-    gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
-
-    return gray
+# def rgb2gray(rgb):
+#     r, g, b = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
+#     gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
+#
+#     return gray
 
 # Read in and simultaneously preprocess video
 def read_video(path):
-    c=0
     cap = cv2.VideoCapture(path)
     fps = int(cap.get(cv2.CAP_PROP_FPS))
     video_frames = []
     face_rects = ()
 
     while cap.isOpened():
-        ret, img = cap.read()
+
+        ret, img = cap.read()#ret is boolean, it is true when video stream contains a frame to read. img is a frame of video stream
         if not ret:
             break
-        gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-        roi_frame = img
+        gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)#cv2.COLOR_RGB2GRAY-no clue
+        # cv2.imshow("gray", gray)
 
-        # Detect face
+        print("gray", np.shape(gray)) #shape=(480,640)
+        #--------------------------------------------------------------------------
+        img[:, :, 2] = 0
+        img[:, :, 0] = 0
+
+        #cv2.imshow('green_img', img)
+        #cv2.waitKey()
+        roi_frame=img
+        #-------------------------------------------------------------------------
+        #cv2.imshow("roi_frame", roi_frame)
+        #shape=(480,640,3)
+        # cv2.imshow("roi_frame", roi_frame)
+        print("roi_frame after gray", np.shape(roi_frame)) #shape=(480,640,3)
         if len(video_frames) == 0:
-            face_rects = faceCascade.detectMultiScale(gray, 1.3, 5)
-
+            face_rects = faceCascade.detectMultiScale(gray, 1.3, 5)# returns position of detected face, if found
+                                                                   # detectMultiScale(img,scale_factor, min_neigh
 
         # Select ROI
         if len(face_rects) > 0:
@@ -42,8 +54,11 @@ def read_video(path):
                 roi_frame = img[y:y + h, x:x + w]
             if roi_frame.size != img.size:
                 roi_frame = cv2.resize(roi_frame, (500, 500))
+                # print("roi_frame", np.shape(roi_frame)) #roi_frame (500, 500, 3)
                 frame = np.ndarray(shape=roi_frame.shape, dtype="float")
-                frame[:] = roi_frame * (1. / 255)
+                # print("2 steps before", np.shape(frame)) #roi_frame (500, 500, 3)
+                frame[:] = roi_frame * (1. / 255)  #Normalisation
+                print("1 step before video_frame", np.shape(frame)) #frame (500,500,3)
                 video_frames.append(frame)
 
 
@@ -59,7 +74,7 @@ def read_video(path):
             # plt.subplot(122), plt.imshow(magnitude_spectrum, cmap='gray')
             # plt.title('Magnitude Spectrum'), plt.xticks([]), plt.yticks([])
             # plt.show()
-
+    # print('video_frames_shape', np.shape(video_frames)) #video_frames shape = (no_frames,500,500,3)
     frame_ct = len(video_frames)
     cap.release()
     return video_frames, frame_ct, fps

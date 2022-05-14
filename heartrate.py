@@ -4,7 +4,7 @@ import numpy as np
 # Calculate heart rate from FFT peaks
 def find_heart_rate(fft, freqs, freq_min, freq_max):
     fft_maximums = []
-
+    print("fft.shape[0]", fft.shape)
     for i in range(fft.shape[0]):
         if freq_min <= freqs[i] <= freq_max:
             fftMap = abs(fft[i])
@@ -13,7 +13,7 @@ def find_heart_rate(fft, freqs, freq_min, freq_max):
             fft_maximums.append(0)
 
     peaks, properties = signal.find_peaks(fft_maximums)
-    max_peak = -1
+    max_peak = 0
     max_freq = 0
     res = [ele for ele in freqs if ele >=0]
     leng=len(freqs)-len(res)
@@ -31,11 +31,11 @@ def find_heart_rate(fft, freqs, freq_min, freq_max):
     # print("peaks:", peaks)
     # Find frequency with max amplitude in peaks
     for peak in peaks:
+        print("freqs[peak]", freqs[peak])
         if fft_maximums[peak] > max_freq:
             max_freq = fft_maximums[peak]
             max_peak = peak
 
     # print("max_freq", max_freq)
-    #
     # print("max_peak", max_peak)
     return freqs[max_peak] * 60
