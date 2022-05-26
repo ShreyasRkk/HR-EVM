@@ -8,7 +8,7 @@ import numpy as np
 from numpy import asarray
 # Frequency range for Fast-Fourier Transform
 freq_min =1.2 #minimum freq range
-freq_max =2 #max freq range
+freq_max =3 #max freq range
 
 t0 = time.time()
 video = cv2.VideoCapture(0)
@@ -19,22 +19,23 @@ if (video.isOpened() == False):
 
 # We need to set resolutions.
 # so, convert them from float to integer.
-frame_width = int(video.get(3))
+frame_width =int(video.get(3))
 frame_height = int(video.get(4))
 
 size = (frame_width, frame_height)
-
 # Below VideoWriter object will create
 # a frame of above defined The output
 # is stored in 'filename.avi' file.
 # FourCC is a 4-byte code used to specify the video codec
 result = cv2.VideoWriter('filename.avi',
                          cv2.VideoWriter_fourcc(*'MJPG'),#here MJPG (motion jpeg)
-                         6, size)
+                         25, size)
 while (True):
     ret, frame = video.read()
 
     if ret == True:
+
+        frame = cv2.resize(frame, size)
 
         # Write the frame into the
         # file 'filename.avi'
@@ -73,7 +74,6 @@ print("Reading + preprocessing video...")
 video_frames, frame_ct, fps = preprocessing.read_video('filename.avi')
 
 
-
 # Build Laplacian video pyramid
 print("Building Laplacian video pyramid...")
 
@@ -90,7 +90,9 @@ amplified_video_pyramid = []
 
 
 for i, video in enumerate(lap_video): #video includes all the frames for each level(layer). shape (1,135,500,500,3)[if lev=3]
-    if i == 0 or i==len(lap_video)-1:
+    # if i == 0 or i==len(lap_video)-1:
+    #     continue
+    if i != (len(lap_video)-1)//2:
         continue
 
     # Eulerian magnification with temporal FFT filtering
@@ -104,7 +106,7 @@ for i, video in enumerate(lap_video): #video includes all the frames for each le
 
 # Collapse laplacian pyramid to generate final video
 print("Rebuilding final video...")
-amplified_frames = pyramids.collapse_laplacian_video_pyramid(lap_video, frame_ct)
+# amplified_frames = pyramids.collapse_laplacian_video_pyramid(lap_video, frame_ct)
 
 # Output heart rate and final video
 print("Heart rate: ", heart_rate, "bpm")
@@ -112,6 +114,6 @@ print("Displaying final video...")
 # for frames in amplified_frames:
 #     cv2.imshow("frames", frames)
 #     cv2.waitKey(20)
-
+#
 
 
